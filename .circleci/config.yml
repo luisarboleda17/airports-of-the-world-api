@@ -27,10 +27,10 @@ jobs:
 workflows:
   test_and_deploy:
     jobs:
-      - set_environment:
-          requires:
-            - set_environment
+      - set_environment
       - unit_test:
           requires:
             - set_environment
-      - e2e_test
+      - e2e_test:
+          requires:
+            - set_environment
