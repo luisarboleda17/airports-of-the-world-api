@@ -16,7 +16,7 @@ jobs:
   e2e_test:
     steps:
       - run:
-          command: yarn run test:e2e
+          command: "yarn run test:e2e"
           name: Run E2E tests with YARN
 workflows:
   test_and_deploy:
