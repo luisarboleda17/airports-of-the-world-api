@@ -1,9 +1,9 @@
 version: 2.1
 orbs:
   node: circleci/node@4.0.1
-  heroku: circleci/heroku@1.0.1
+  heroku: circleci/heroku@1.2.2
 jobs:
-  set_environment:
+  unit_test:
     docker:
       - image: 'cimg/base:stable'
     steps:
@@ -11,26 +11,26 @@ jobs:
       - node/install:
           install-yarn: true
       - node/install-packages:
-            pkg-manager: yarn
-  unit_test:
-    executor: node/default
-    steps:
+          pkg-manager: yarn
       - run:
           command: yarn run test
           name: Run unit tests with YARN
   e2e_test:
-    executor: node/default
+    docker:
+      - image: 'cimg/base:stable'
     steps:
+      - checkout
+      - node/install:
+          install-yarn: true
+      - node/install-packages:
+          pkg-manager: yarn
       - run:
           command: "yarn run test:e2e"
           name: Run E2E tests with YARN
+  deploy_heorku:
+
 workflows:
   test_and_deploy:
     jobs:
-      - set_environment
-      - unit_test:
-          requires:
-            - set_environment
-      - e2e_test:
-          requires:
-            - set_environment
+      - unit_test
+      - e2e_test
