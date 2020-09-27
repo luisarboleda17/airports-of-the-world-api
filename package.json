@@ -1,8 +1,8 @@
 {
-  "name": "api",
+  "name": "airports-of-the-world-api",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Airports of the World API for 8co development internship program",
+  "author": "Luis Arboleda | 8co development",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
