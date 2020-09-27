@@ -1,10 +1,26 @@
 version: 2.1
 orbs:
+  node: circleci/node@4.0.1
   heroku: circleci/heroku@1.0.1
+jobs:
+  set_environment:
+    steps:
+      - checkout
+      - node/install-packages:
+            pkg-manager: yarn
+  unit_test:
+    steps:
+      - run:
+          command: yarn run test
+          name: Run unit tests with YARN
+  e2e_test:
+    steps:
+      - run:
+          command: yarn run test:e2e
+          name: Run E2E tests with YARN
 workflows:
-  node-tests:
+  test_and_deploy:
     jobs:
-      - node/test
-  heroku_deploy:
-    jobs:
-      - heroku/deploy-via-git
+      - set_environment
+      - unit_test
+      - e2e_test
