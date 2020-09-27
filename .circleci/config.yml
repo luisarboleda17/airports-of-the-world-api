@@ -1,26 +1,44 @@
 version: 2.1
 orbs:
   node: circleci/node@4.0.1
-  heroku: circleci/heroku@1.0.1
+  heroku: circleci/heroku@1.2.2
 jobs:
-  set_environment:
+  test:
+    docker:
+      - image: 'cimg/base:stable'
     steps:
       - checkout
+      - node/install:
+          install-yarn: true
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "yarn.lock" }}
+            - v1-dependencies-
       - node/install-packages:
-            pkg-manager: yarn
-  unit_test:
-    steps:
+          pkg-manager: yarn
+      - save_cache:
+          key: v1-dependencies-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
       - run:
-          command: yarn run test
-          name: Run unit tests with YARN
-  e2e_test:
-    steps:
+          command: yarn run lint
+          name: Linting
       - run:
-          command: yarn run test:e2e
-          name: Run E2E tests with YARN
+          command: yarn run test:cov
+          name: Unit testing
+      - store_artifacts:
+          path: ~/coverage
+      - run:
+          command: "yarn run test:e2e"
+          name: E2E testing
 workflows:
   test_and_deploy:
     jobs:
-      - set_environment
-      - unit_test
-      - e2e_test
+      - test
+      - heroku/deploy-via-git:
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - test
