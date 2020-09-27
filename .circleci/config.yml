@@ -6,7 +6,6 @@ jobs:
   test:
     docker:
       - image: 'cimg/base:stable'
-    working_directory: ~/airports-of-the-world
     steps:
       - checkout
       - node/install:
@@ -28,7 +27,7 @@ jobs:
           command: yarn run test:cov
           name: Unit testing
       - store_artifacts:
-          path: ~/airports-of-the-world/coverage
+          path: ~/coverage
       - run:
           command: "yarn run test:e2e"
           name: E2E testing
