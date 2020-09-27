@@ -4,16 +4,20 @@ orbs:
   heroku: circleci/heroku@1.0.1
 jobs:
   set_environment:
+    docker:
+      - image: 'cimg/base:stable'
     steps:
       - checkout
       - node/install-packages:
             pkg-manager: yarn
   unit_test:
+    executor: node/default
     steps:
       - run:
           command: yarn run test
           name: Run unit tests with YARN
   e2e_test:
+    executor: node/default
     steps:
       - run:
           command: "yarn run test:e2e"
