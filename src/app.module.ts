@@ -1,5 +1,6 @@
 
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AirportsController } from './airports/airports.controller';
@@ -8,6 +9,7 @@ import { Airport } from './models/airport.entity';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot(),
     TypeOrmModule.forFeature([Airport,]),
   ],
