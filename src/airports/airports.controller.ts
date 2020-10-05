@@ -1,5 +1,8 @@
+
 import { Controller, Get, Param, NotFoundException } from '@nestjs/common';
 import { AirportsService } from './airports.service';
+import { ApiResponse } from '../models/api-response';
+import { AirportDTO } from '../models/airport.dto';
 
 @Controller('airports')
 export class AirportsController {
@@ -9,9 +12,9 @@ export class AirportsController {
   Get all airports
    */
   @Get()
-  findAll(): any {
+  async findAll(): Promise<ApiResponse<AirportDTO[]>> {
     return {
-      data: this.airportsService.findAll(),
+      data: await this.airportsService.findAll(),
     };
   }
 
