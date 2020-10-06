@@ -24,13 +24,13 @@ export class AirportDTO implements Readonly<AirportDTO> {
   ICAO: string;
 
   @IsDecimal()
-  latitude: number;
+  latitude: string;
 
   @IsDecimal()
-  longitude: number;
+  longitude: string;
 
   @IsDecimal()
-  altitude: number;
+  altitude: string;
 
   @IsInt()
   timezone: number;

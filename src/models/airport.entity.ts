@@ -22,13 +22,13 @@ export class Airport {
   icao: string;
 
   @Column({ type: 'decimal' })
-  latitude: number;
+  latitude: string;
 
   @Column({ type: 'decimal' })
-  longitude: number;
+  longitude: string;
 
   @Column({ type: 'decimal' })
-  altitude: number;
+  altitude: string;
 
   @Column({ type: 'integer' })
   timezone: number;
