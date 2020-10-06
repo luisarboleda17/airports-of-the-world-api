@@ -34,7 +34,7 @@ export class Airport {
   timezone: number;
 
   @Column({ type: 'varchar', length: 1 })
-  dst: number;
+  dst: string;
 
   @Column({ type: 'varchar' })
   type: string;

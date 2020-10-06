@@ -37,7 +37,7 @@ export class AirportDTO implements Readonly<AirportDTO> {
 
   @IsString()
   @Length(1, 1)
-  dst: number;
+  dst: string;
 
   @IsString()
   type: string;
