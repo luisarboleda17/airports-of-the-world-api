@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { Airport } from '../models/airport.entity';
 import { AirportDTO } from '../models/airport.dto';
 
-
 @Injectable()
 export class AirportsService {
   constructor(
@@ -29,6 +28,6 @@ export class AirportsService {
     return this.repository.findOne({
       where: { id, }
     })
-      .then(airport => AirportDTO.fromEntity(airport));
+      .then(airport => airport ? AirportDTO.fromEntity(airport) : null);
   }
 }
