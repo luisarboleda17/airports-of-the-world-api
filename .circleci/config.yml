@@ -74,7 +74,7 @@ jobs:
           paths:
             - node_modules
       - run:
-          command: "yarn run typeorm:migration:run"
+          command: "echo $ENV && yarn run typeorm:migration:run"
           environment:
               ENV: prod
           name: Run migrations
