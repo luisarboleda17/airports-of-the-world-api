@@ -3,7 +3,7 @@ orbs:
   node: circleci/node@4.0.1
   heroku: circleci/heroku@1.2.2
 jobs:
-  test:
+  unit_test:
     docker:
       - image: 'cimg/base:stable'
     steps:
@@ -28,17 +28,48 @@ jobs:
           name: Unit testing
       - store_artifacts:
           path: ~/coverage
+  e2e_test:
+    docker:
+      - image: 'cimg/base:stable'
+    steps:
+      - checkout
+      - node/install:
+          install-yarn: true
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "yarn.lock" }}
+            - v1-dependencies-
+      - node/install-packages:
+          pkg-manager: yarn
+      - save_cache:
+          key: v1-dependencies-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - run:
+          command: yarn run lint
+          name: Linting
+      -run:
+          command: "yarn run typeorm:migration:run"
+          name: Run migrations
       - run:
           command: "yarn run test:e2e"
           name: E2E testing
 workflows:
   test_and_deploy:
     jobs:
-      - test
+      - unit_test
+      - e2e_test
       - heroku/deploy-via-git:
-          filters:
-            branches:
-              only:
-                - master
           requires:
-            - test
+            - unit_test
+            - e2e_test
+    filters:
+      branches:
+        only:
+          - master
+  test_branch:
+    jobs:
+      - unit_test
+    filters:
+      ignore:
+        - master
