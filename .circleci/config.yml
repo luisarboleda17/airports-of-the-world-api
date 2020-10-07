@@ -50,8 +50,6 @@ jobs:
           name: Linting
       - run:
           command: "yarn run typeorm:migration:run"
-          environment:
-              ENV: test
           name: Run migrations
       - run:
           command: "yarn run test:e2e"
@@ -75,8 +73,6 @@ jobs:
             - node_modules
       - run:
           command: "yarn run typeorm:migration:run"
-          environment:
-              ENV: prod
           name: Run migrations
       - heroku/deploy-via-git
 workflows:
@@ -84,11 +80,13 @@ workflows:
     jobs:
       - unit_test
       - e2e_test:
+          context: heroku_test
           filters:
             branches:
               only:
                 - master
       - deploy:
+          context: heroku_prod
           requires:
             - unit_test
             - e2e_test
