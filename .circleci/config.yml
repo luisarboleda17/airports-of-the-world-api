@@ -50,10 +50,35 @@ jobs:
           name: Linting
       - run:
           command: "yarn run typeorm:migration:run"
+          environment:
+              ENV: test
           name: Run migrations
       - run:
           command: "yarn run test:e2e"
           name: E2E testing
+  deploy:
+    docker:
+      - image: 'cimg/base:stable'
+    steps:
+      - checkout
+      - node/install:
+          install-yarn: true
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "yarn.lock" }}
+            - v1-dependencies-
+      - node/install-packages:
+          pkg-manager: yarn
+      - save_cache:
+          key: v1-dependencies-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - run:
+          command: "yarn run typeorm:migration:run"
+          environment:
+              ENV: prod
+          name: Run migrations
+      - heroku/deploy-via-git
 workflows:
   test_and_deploy:
     jobs:
@@ -63,7 +88,7 @@ workflows:
             branches:
               only:
                 - master
-      - heroku/deploy-via-git:
+      - deploy:
           requires:
             - unit_test
             - e2e_test
