@@ -17,6 +17,10 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
     return this.configService.get('ENV') === 'test';
   }
 
+  useSSL(): boolean {
+    return this.configService.get('DATABASE_USE_SSL') === '1';
+  }
+
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
       type: 'postgres',
@@ -31,8 +35,12 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       cli: {
         migrationsDir: 'src/migration',
       },
-      ssl: this.isProduction(),
-      // keepConnectionAlive: this.isTest(),
+      extra: {
+        ssl: {
+          rejectUnauthorized: !this.isTest(),
+        }
+      },
+      ssl: this.useSSL(),
     };
   }
 }
