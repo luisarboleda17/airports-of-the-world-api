@@ -22,7 +22,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
   }
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
-    return {
+    const baseConfig: TypeOrmModuleOptions = {
       type: 'postgres',
       host: this.configService.get('DATABASE_HOST'),
       port: this.configService.get<number>('DATABASE_PORT'),
@@ -35,12 +35,12 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       cli: {
         migrationsDir: 'src/migration',
       },
-      extra: {
-        [this.useSSL() ? 'ssl' : null]: {
-          rejectUnauthorized: false,
-        }
-      },
+      extra: {},
       ssl: this.useSSL(),
     };
+    if (this.useSSL())
+      baseConfig.extra['ssl'] = { rejectUnauthorized: false, };
+
+    return baseConfig;
   }
 }
