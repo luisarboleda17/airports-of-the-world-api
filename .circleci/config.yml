@@ -74,9 +74,9 @@ jobs:
           paths:
             - node_modules
       - run:
-          command: yarn run typeorm:migration:run"
+          command: "yarn run typeorm:migration:run"
           environment:
-              ENV: prod"
+              ENV: prod
               DATABASE_HOST: $PROD_DATABASE_HOST
               DATABASE_PORT: $PROD_DATABASE_PORT
               DATABASE_USER: $PROD_DATABASE_USER
