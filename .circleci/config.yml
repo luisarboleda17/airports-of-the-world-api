@@ -31,7 +31,6 @@ jobs:
   e2e_test:
     docker:
       - image: 'cimg/base:stable'
-    context: heroku_test
     steps:
       - checkout
       - node/install:
@@ -51,14 +50,15 @@ jobs:
           name: Linting
       - run:
           command: "yarn run typeorm:migration:run"
+          context: heroku_test
           name: Run migrations
       - run:
           command: "yarn run test:e2e"
+          context: heroku_test
           name: E2E testing
   deploy:
     docker:
       - image: 'cimg/base:stable'
-    context: heroku_prod
     steps:
       - checkout
       - node/install:
@@ -75,6 +75,7 @@ jobs:
             - node_modules
       - run:
           command: "yarn run typeorm:migration:run"
+          context: heroku_prod
           name: Run migrations
       - heroku/deploy-via-git
 workflows:
