@@ -74,9 +74,14 @@ jobs:
           paths:
             - node_modules
       - run:
-          command: "echo $ENV && yarn run typeorm:migration:run"
+          command: yarn run typeorm:migration:run"
           environment:
-              ENV: prod
+              ENV: prod"
+              DATABASE_HOST: $PROD_DATABASE_HOST
+              DATABASE_PORT: $PROD_DATABASE_PORT
+              DATABASE_USER: $PROD_DATABASE_USER
+              DATABASE_PASSWORD: $PROD_DATABASE_PASSWORD
+              DATABASE_DATABASE: $PROD_DATABASE_DATABASE
           name: Run migrations
       - heroku/deploy-via-git
 workflows:
