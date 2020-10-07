@@ -36,8 +36,8 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         migrationsDir: 'src/migration',
       },
       extra: {
-        ssl: {
-          rejectUnauthorized: !(this.isTest() || this.isProduction()),
+        [this.useSSL() ? 'ssl' : null]: {
+          rejectUnauthorized: false,
         }
       },
       ssl: this.useSSL(),
