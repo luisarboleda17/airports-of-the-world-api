@@ -77,11 +77,11 @@ jobs:
           command: "yarn run typeorm:migration:run"
           environment:
               ENV: prod
-              DATABASE_HOST: $PROD_DATABASE_HOST
-              DATABASE_PORT: $PROD_DATABASE_PORT
-              DATABASE_USER: $PROD_DATABASE_USER
-              DATABASE_PASSWORD: $PROD_DATABASE_PASSWORD
-              DATABASE_DATABASE: $PROD_DATABASE_DATABASE
+              DATABASE_HOST: "${PROD_DATABASE_HOST}"
+              DATABASE_PORT: "${PROD_DATABASE_PORT}"
+              DATABASE_USER: "${PROD_DATABASE_USER}"
+              DATABASE_PASSWORD: "${PROD_DATABASE_PASSWORD}"
+              DATABASE_DATABASE: "${PROD_DATABASE_DATABASE}"
           name: Run migrations
       - heroku/deploy-via-git
 workflows:
