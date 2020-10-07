@@ -48,7 +48,7 @@ jobs:
       - run:
           command: yarn run lint
           name: Linting
-      -run:
+      - run:
           command: "yarn run typeorm:migration:run"
           name: Run migrations
       - run:
