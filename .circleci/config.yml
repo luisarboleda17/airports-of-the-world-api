@@ -31,6 +31,7 @@ jobs:
   e2e_test:
     docker:
       - image: 'cimg/base:stable'
+    context: heroku_test
     steps:
       - checkout
       - node/install:
@@ -50,8 +51,6 @@ jobs:
           name: Linting
       - run:
           command: "yarn run typeorm:migration:run"
-          environment:
-              ENV: test
           name: Run migrations
       - run:
           command: "yarn run test:e2e"
@@ -59,6 +58,7 @@ jobs:
   deploy:
     docker:
       - image: 'cimg/base:stable'
+    context: heroku_prod
     steps:
       - checkout
       - node/install:
@@ -75,13 +75,6 @@ jobs:
             - node_modules
       - run:
           command: "yarn run typeorm:migration:run"
-          environment:
-              ENV: prod
-              DATABASE_HOST: "${PROD_DATABASE_HOST}"
-              DATABASE_PORT: "${PROD_DATABASE_PORT}"
-              DATABASE_USER: "${PROD_DATABASE_USER}"
-              DATABASE_PASSWORD: "${PROD_DATABASE_PASSWORD}"
-              DATABASE_DATABASE: "${PROD_DATABASE_DATABASE}"
           name: Run migrations
       - heroku/deploy-via-git
 workflows:
