@@ -37,7 +37,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       },
       extra: {
         ssl: {
-          rejectUnauthorized: !this.isTest(),
+          rejectUnauthorized: !(this.isTest() || this.isProduction()),
         }
       },
       ssl: this.useSSL(),
