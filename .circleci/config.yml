@@ -58,18 +58,16 @@ workflows:
   test_and_deploy:
     jobs:
       - unit_test
-      - e2e_test
+      - e2e_test:
+          filters:
+            branches:
+              only:
+                - master
       - heroku/deploy-via-git:
           requires:
             - unit_test
             - e2e_test
-    filters:
-      branches:
-        only:
-          - master
-  test_branch:
-    jobs:
-      - unit_test
-    filters:
-      ignore:
-        - master
+          filters:
+            branches:
+              only:
+                - master
