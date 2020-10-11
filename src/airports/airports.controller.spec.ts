@@ -5,10 +5,11 @@ import { NotFoundException } from '@nestjs/common';
 import { AirportsController } from './airports.controller';
 import { AirportsService } from './airports.service';
 import { AirportDTO } from '../models/airport.dto';
+import { AirportsListDTO } from '../models/airports-list.dto';
+import { PaginationDTO } from '../models/pagination.dto';
 
 const AIRPORTS_EXAMPLES = [
   AirportDTO.from({
-    id: '1',
     name: 'Goroka Airport',
     city: 'Goroka',
     country: 'Papua New Guinea',
@@ -23,7 +24,6 @@ const AIRPORTS_EXAMPLES = [
     source: 'OurAirports'
   }),
   AirportDTO.from({
-    id: '2',
     name: 'Madang Airport',
     city: 'Madang',
     country: 'Papua New Guinea',
@@ -40,7 +40,8 @@ const AIRPORTS_EXAMPLES = [
 ];
 
 const airportsServiceMockFactory = () => ({
-  find: jest.fn(),
+  findByIATA: jest.fn(),
+  findByICAO: jest.fn(),
   findAll: jest.fn(),
 });
 
@@ -60,33 +61,109 @@ describe('AirportsController', () => {
     controller = module.get<AirportsController>(AirportsController);
   });
 
-  it('should return a list of airports', async () => {
-    const airportsServiceFindAllSpy = jest.spyOn(service, 'findAll').mockResolvedValue(AIRPORTS_EXAMPLES);
-    const airports = await controller.findAll();
+  it('search without filters, then return a list of airports', async () => {
+    const result = {
+      page: 1,
+      pages: 1,
+      limit: 10,
+      total: AIRPORTS_EXAMPLES.length,
+      data: AIRPORTS_EXAMPLES.map(airport => AirportDTO.from(airport)),
+    };
+    const paginationDTO: PaginationDTO = { page: 1, limit: 10 };
+    const airportsListDTO = AirportsListDTO.from({});
+    const airportsServiceFindAllSpy = jest.spyOn(service, 'findAll').mockResolvedValue(result);
+    const airports = await controller.findAll(paginationDTO, airportsListDTO);
 
     expect(airportsServiceFindAllSpy).toBeCalledTimes(1);
-    expect(airports.data).toEqual(AIRPORTS_EXAMPLES);
+    expect(airportsServiceFindAllSpy).toBeCalledWith(paginationDTO, airportsListDTO);
+    expect(airports.data).toEqual(result);
   });
 
-  it('should return an airport object', async () => {
-    const airportsServiceFindSpy = jest.spyOn(service, 'find').mockResolvedValue(AIRPORTS_EXAMPLES[0]);
-    const airport = await controller.find(AIRPORTS_EXAMPLES[0].id);
+  it('search with all filters, then return a list of airports', async () => {
+    const result = {
+      page: 1,
+      pages: 1,
+      limit: 10,
+      total: AIRPORTS_EXAMPLES.length,
+      data: AIRPORTS_EXAMPLES.map(airport => AirportDTO.from(airport)),
+    };
+    const paginationDTO: PaginationDTO = { page: 1, limit: 10 };
+    const airportsListDTO = AirportsListDTO.from({
+      name: 'test-name',
+      city: 'test-city',
+      country: 'test-country',
+    });
+    const airportsServiceFindAllSpy = jest.spyOn(service, 'findAll').mockResolvedValue(result);
+    const airports = await controller.findAll(paginationDTO, airportsListDTO);
+
+    expect(airportsServiceFindAllSpy).toBeCalledTimes(1);
+    expect(airportsServiceFindAllSpy).toBeCalledWith(paginationDTO, airportsListDTO);
+    expect(airports.data).toEqual(result);
+  });
+
+  it('search with all filters, then return an empty list', async () => {
+    const result = {
+      page: 1,
+      pages: 1,
+      limit: 10,
+      total: 0,
+      data: [],
+    };
+    const paginationDTO: PaginationDTO = { page: 1, limit: 10 };
+    const airportsListDTO = AirportsListDTO.from({
+      name: 'test-name',
+      city: 'test-city',
+      country: 'test-country',
+    });
+    const airportsServiceFindAllSpy = jest.spyOn(service, 'findAll').mockResolvedValue(result);
+    const airports = await controller.findAll(paginationDTO, airportsListDTO);
+
+    expect(airportsServiceFindAllSpy).toBeCalledTimes(1);
+    expect(airportsServiceFindAllSpy).toBeCalledWith(paginationDTO, airportsListDTO);
+    expect(airports.data).toEqual(result);
+  });
+
+  it('search by IATA, then should return an airport object', async () => {
+    const airportsServiceFindSpy = jest.spyOn(service, 'findByIATA').mockResolvedValue(AIRPORTS_EXAMPLES[0]);
+    const airport = await controller.findByIATA(AIRPORTS_EXAMPLES[0].IATA);
 
     expect(airportsServiceFindSpy).toBeCalledTimes(1);
-    expect(airportsServiceFindSpy).toBeCalledWith(AIRPORTS_EXAMPLES[0].id);
+    expect(airportsServiceFindSpy).toBeCalledWith(AIRPORTS_EXAMPLES[0].IATA);
     expect(airport.data).toEqual(AIRPORTS_EXAMPLES[0]);
   });
 
-  it('should not found the airport, then throw a not found exceptrion', async () => {
-    const airportsServiceFindSpy = jest.spyOn(service, 'find').mockResolvedValue(null);
+  it('search by IATA, then should throw a not found exception', async () => {
+    const airportsServiceFindSpy = jest.spyOn(service, 'findByIATA').mockResolvedValue(null);
 
     try {
-      await controller.find('test-id')
+      await controller.findByIATA('test-iata')
     } catch (error) {
       expect(error).toBeInstanceOf(NotFoundException);
-      expect(error.message).toBe('An airport with id test-id was not found');
+      expect(error.message).toBe('An airport with IATA code test-iata was not found');
     }
     expect(airportsServiceFindSpy).toBeCalledTimes(1);
-    expect(airportsServiceFindSpy).toBeCalledWith('test-id');
+    expect(airportsServiceFindSpy).toBeCalledWith('test-iata');
+  });
+
+  it('search by ICAO, then should return an airport object', async () => {
+    const airportsServiceFindSpy = jest.spyOn(service, 'findByICAO').mockResolvedValue(AIRPORTS_EXAMPLES[0]);
+    const airport = await controller.findByICAO(AIRPORTS_EXAMPLES[0].ICAO);
+
+    expect(airportsServiceFindSpy).toBeCalledTimes(1);
+    expect(airportsServiceFindSpy).toBeCalledWith(AIRPORTS_EXAMPLES[0].ICAO);
+    expect(airport.data).toEqual(AIRPORTS_EXAMPLES[0]);
+  });
+
+  it('search by ICAO, then should throw a not found exception', async () => {
+    const airportsServiceFindSpy = jest.spyOn(service, 'findByICAO').mockResolvedValue(null);
+
+    try {
+      await controller.findByICAO('test-icao')
+    } catch (error) {
+      expect(error).toBeInstanceOf(NotFoundException);
+      expect(error.message).toBe('An airport with ICAO code test-icao was not found');
+    }
+    expect(airportsServiceFindSpy).toBeCalledTimes(1);
+    expect(airportsServiceFindSpy).toBeCalledWith('test-icao');
   });
 });

@@ -4,7 +4,8 @@ import { Airport } from './airport.entity';
 
 export class AirportDTO implements Readonly<AirportDTO> {
   @IsString()
-  id: string;
+  @Length(3, 3)
+  IATA: string;
 
   @IsString()
   name: string;
@@ -14,10 +15,6 @@ export class AirportDTO implements Readonly<AirportDTO> {
 
   @IsString()
   country: string;
-
-  @IsString()
-  @Length(3, 3)
-  IATA: string;
 
   @IsString()
   @Length(4, 4)
@@ -47,11 +44,10 @@ export class AirportDTO implements Readonly<AirportDTO> {
 
   static from(dto: Partial<AirportDTO>) {
     const airport = new AirportDTO();
-    airport.id = dto.id;
+    airport.IATA = dto.IATA;
     airport.name = dto.name;
     airport.city = dto.city;
     airport.country = dto.country;
-    airport.IATA = dto.IATA;
     airport.ICAO = dto.ICAO;
     airport.latitude = dto.latitude;
     airport.longitude = dto.longitude;
@@ -65,7 +61,6 @@ export class AirportDTO implements Readonly<AirportDTO> {
 
   static fromEntity(entity: Airport) {
     return this.from({
-      id: entity.id,
       name: entity.name,
       city: entity.city,
       country: entity.country,
@@ -83,7 +78,6 @@ export class AirportDTO implements Readonly<AirportDTO> {
 
   toEntity() {
     const airport = new Airport();
-    airport.id = this.id;
     airport.name = this.name;
     airport.city = this.city;
     airport.country = this.country;
