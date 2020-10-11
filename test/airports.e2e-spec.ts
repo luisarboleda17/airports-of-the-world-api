@@ -11,7 +11,6 @@ import { Repository } from 'typeorm';
 
 const AIRPORTS_EXAMPLES = [
   {
-    id: '1',
     name: 'Goroka Airport',
     city: 'Goroka',
     country: 'Papua New Guinea',
@@ -26,7 +25,6 @@ const AIRPORTS_EXAMPLES = [
     source: 'OurAirports'
   },
   {
-    id: '2',
     name: 'Madang Airport',
     city: 'Madang',
     country: 'Papua New Guinea',
@@ -71,19 +69,35 @@ describe('Airports (e2e)', () => {
       });
   });
 
-  it('Fetch and airport by it\'s id, then receive an airport', async () => {
+  it('Fetch and airport by it\'s IATA code, then receive an airport', async () => {
     await airportRepository.save([AirportDTO.from(AIRPORTS_EXAMPLES[0]).toEntity()]);
     return request(app.getHttpServer())
-      .get(`/airports/${AIRPORTS_EXAMPLES[0].id}`)
+      .get(`/airports/iata/${AIRPORTS_EXAMPLES[0].IATA}`)
       .expect(200)
       .expect({
         data: AIRPORTS_EXAMPLES[0],
       });
   });
 
-  it('Fetch and airport by it\'s id, then throw an error if it is not found', () => {
+  it('Fetch and airport by it\'s IATA code, then throw a not found exception', () => {
     return request(app.getHttpServer())
-      .get('/airports/test-id')
+      .get('/airports/iata/test-iata')
+      .expect(404);
+  });
+
+  it('Fetch and airport by it\'s ICAO code, then receive an airport', async () => {
+    await airportRepository.save([AirportDTO.from(AIRPORTS_EXAMPLES[0]).toEntity()]);
+    return request(app.getHttpServer())
+      .get(`/airports/icao/${AIRPORTS_EXAMPLES[0].ICAO}`)
+      .expect(200)
+      .expect({
+        data: AIRPORTS_EXAMPLES[0],
+      });
+  });
+
+  it('Fetch and airport by it\'s ICAO code, then throw a not found exception', () => {
+    return request(app.getHttpServer())
+      .get('/airports/icao/test-icao')
       .expect(404);
   });
 });

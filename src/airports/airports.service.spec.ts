@@ -9,7 +9,6 @@ import { Airport } from '../models/airport.entity';
 
 const AIRPORTS_EXAMPLES = [
   AirportDTO.from({
-    id: '1',
     name: 'Goroka Airport',
     city: 'Goroka',
     country: 'Papua New Guinea',
@@ -24,7 +23,6 @@ const AIRPORTS_EXAMPLES = [
     source: 'OurAirports'
   }),
   AirportDTO.from({
-    id: '2',
     name: 'Madang Airport',
     city: 'Madang',
     country: 'Papua New Guinea',
@@ -75,23 +73,43 @@ describe('AirportsService', () => {
     expect(airports).toEqual(AIRPORTS_EXAMPLES);
   });
 
-  it('should return an airport object', async () => {
+  it('search by IATA code, then should return an airport object', async () => {
     const airportRepositoryFindOneSpy = jest.spyOn(airportRepository, 'findOne')
       .mockResolvedValue(AIRPORTS_EXAMPLES[0].toEntity());
-    const airport = await service.find(AIRPORTS_EXAMPLES[0].id);
+    const airport = await service.findByIATA(AIRPORTS_EXAMPLES[0].IATA);
 
     expect(airportRepositoryFindOneSpy).toBeCalledTimes(1);
-    expect(airportRepositoryFindOneSpy).toBeCalledWith({ where: { id: AIRPORTS_EXAMPLES[0].id }});
+    expect(airportRepositoryFindOneSpy).toBeCalledWith({ where: { iata: AIRPORTS_EXAMPLES[0].IATA }});
     expect(airport).toEqual(AIRPORTS_EXAMPLES[0]);
   });
 
-  it('should return null, instead of an airport object', async () => {
+  it('search by IATA code, then should return null', async () => {
     const airportRepositoryFindOneSpy = jest.spyOn(airportRepository, 'findOne')
       .mockResolvedValue(null);
-    const airport = await service.find(AIRPORTS_EXAMPLES[0].id);
+    const airport = await service.findByIATA('test-iata');
 
     expect(airportRepositoryFindOneSpy).toBeCalledTimes(1);
-    expect(airportRepositoryFindOneSpy).toBeCalledWith({ where: { id: AIRPORTS_EXAMPLES[0].id }});
+    expect(airportRepositoryFindOneSpy).toBeCalledWith({ where: { iata: 'test-iata' }});
+    expect(airport).toBeNull();
+  });
+
+  it('search by ICAO code, then should return an airport object', async () => {
+    const airportRepositoryFindOneSpy = jest.spyOn(airportRepository, 'findOne')
+      .mockResolvedValue(AIRPORTS_EXAMPLES[0].toEntity());
+    const airport = await service.findByICAO(AIRPORTS_EXAMPLES[0].ICAO);
+
+    expect(airportRepositoryFindOneSpy).toBeCalledTimes(1);
+    expect(airportRepositoryFindOneSpy).toBeCalledWith({ where: { icao: AIRPORTS_EXAMPLES[0].ICAO }});
+    expect(airport).toEqual(AIRPORTS_EXAMPLES[0]);
+  });
+
+  it('search by ICAO code, then should return null', async () => {
+    const airportRepositoryFindOneSpy = jest.spyOn(airportRepository, 'findOne')
+      .mockResolvedValue(null);
+    const airport = await service.findByICAO('test-icao');
+
+    expect(airportRepositoryFindOneSpy).toBeCalledTimes(1);
+    expect(airportRepositoryFindOneSpy).toBeCalledWith({ where: { icao: 'test-icao' }});
     expect(airport).toBeNull();
   });
 });

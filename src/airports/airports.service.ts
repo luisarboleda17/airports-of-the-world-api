@@ -21,12 +21,23 @@ export class AirportsService {
   }
 
   /**
-   * Get an specific airport by its id
-   * @param id
+   * Get an specific airport by its IATA code
+   * @param iata
    */
-  find(id: string): Promise<AirportDTO> {
+  findByIATA(iata: string): Promise<AirportDTO> {
     return this.repository.findOne({
-      where: { id, }
+      where: { iata, }
+    })
+      .then(airport => airport ? AirportDTO.fromEntity(airport) : null);
+  }
+
+  /**
+   * Get an specific airport by its ICAO code
+   * @param icao
+   */
+  findByICAO(icao: string): Promise<AirportDTO> {
+    return this.repository.findOne({
+      where: { icao, }
     })
       .then(airport => airport ? AirportDTO.fromEntity(airport) : null);
   }

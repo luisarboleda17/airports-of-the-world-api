@@ -19,15 +19,28 @@ export class AirportsController {
   }
 
   /**
-   * Get an specific airport by its id
-   * @param id
+   * Get an specific airport by its IATA code
+   * @param iata
    */
-  @Get(':id')
-  async find(@Param('id') id: string): Promise<ApiResponse<AirportDTO>> {
-    const airport = await this.airportsService.find(id);
+  @Get('iata/:iata')
+  async findByIATA(@Param('iata') iata: string): Promise<ApiResponse<AirportDTO>> {
+    const airport = await this.airportsService.findByIATA(iata);
     if (airport)
       return { data: airport, };
     else
-      throw new NotFoundException(`An airport with id ${id} was not found`);
+      throw new NotFoundException(`An airport with IATA code ${iata} was not found`);
+  }
+
+  /**
+   * Get an specific airport by its ICAO code
+   * @param icao
+   */
+  @Get('icao/:icao')
+  async findByICAO(@Param('icao') icao: string): Promise<ApiResponse<AirportDTO>> {
+    const airport = await this.airportsService.findByICAO(icao);
+    if (airport)
+      return { data: airport, };
+    else
+      throw new NotFoundException(`An airport with ICAO code ${icao} was not found`);
   }
 }
