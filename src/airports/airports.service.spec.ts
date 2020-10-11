@@ -38,14 +38,18 @@ const AIRPORTS_EXAMPLES = [
   }),
 ];
 
-export class AirportRepositoryMock {
-  public async findOne(): Promise<void> {
-    return Promise.resolve();
-  }
-  public async find(): Promise<void> {
-    return Promise.resolve();
-  }
-}
+let airportRepositoryGetManyMock = jest.fn();
+const airportRepositoryFactoryMock = jest.fn(() => ({
+  findOne: jest.fn(),
+  find: jest.fn(),
+  count: jest.fn(),
+  createQueryBuilder: jest.fn(() => ({
+    orderBy: jest.fn().mockReturnThis(),
+    offset: jest.fn().mockReturnThis(),
+    limit: jest.fn().mockReturnThis(),
+    getMany: airportRepositoryGetManyMock,
+  })),
+}));
 
 describe('AirportsService', () => {
   let service: AirportsService;
@@ -55,7 +59,7 @@ describe('AirportsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AirportsService,
-        { provide: getRepositoryToken(Airport), useClass: AirportRepositoryMock }
+        { provide: getRepositoryToken(Airport), useFactory: airportRepositoryFactoryMock }
       ],
     }).compile();
 
@@ -64,13 +68,17 @@ describe('AirportsService', () => {
   });
 
   it('should return a list of airports', async () => {
-    const airportRepositoryFindSpy = jest.spyOn(airportRepository, 'find')
-      .mockResolvedValue(AIRPORTS_EXAMPLES.map(airport => airport.toEntity()));
-    const airports = await service.findAll();
+    const airportRepositoryCountSpy = jest.spyOn(airportRepository, 'count').mockResolvedValue(AIRPORTS_EXAMPLES.length);
+    airportRepositoryGetManyMock = airportRepositoryGetManyMock.mockResolvedValue(AIRPORTS_EXAMPLES.map(airport => airport.toEntity()));
+    const airports = await service.findAll({ page: 1, limit: 10 });
 
-    expect(airportRepositoryFindSpy).toBeCalledTimes(1);
-    expect(airports.length).toBe(AIRPORTS_EXAMPLES.length);
-    expect(airports).toEqual(AIRPORTS_EXAMPLES);
+    expect(airportRepositoryGetManyMock).toBeCalledTimes(1);
+    expect(airportRepositoryCountSpy).toBeCalledTimes(1);
+    expect(airports.page).toBe(1);
+    expect(airports.limit).toBe(10);
+    expect(airports.pages).toBe(1);
+    expect(airports.total).toBe(AIRPORTS_EXAMPLES.length);
+    expect(airports.data).toEqual(AIRPORTS_EXAMPLES);
   });
 
   it('search by IATA code, then should return an airport object', async () => {

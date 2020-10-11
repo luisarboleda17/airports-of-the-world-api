@@ -60,11 +60,23 @@ describe('AirportsController', () => {
   });
 
   it('should return a list of airports', async () => {
-    const airportsServiceFindAllSpy = jest.spyOn(service, 'findAll').mockResolvedValue(AIRPORTS_EXAMPLES);
-    const airports = await controller.findAll();
+    const airportsServiceFindAllSpy = jest.spyOn(service, 'findAll').mockResolvedValue({
+      page: 1,
+      pages: 1,
+      limit: 10,
+      total: AIRPORTS_EXAMPLES.length,
+      data: AIRPORTS_EXAMPLES.map(airport => AirportDTO.from(airport)),
+    });
+    const airports = await controller.findAll({ page: 1, limit: 10 });
 
     expect(airportsServiceFindAllSpy).toBeCalledTimes(1);
-    expect(airports.data).toEqual(AIRPORTS_EXAMPLES);
+    expect(airports.data).toEqual({
+      page: 1,
+      pages: 1,
+      limit: 10,
+      total: AIRPORTS_EXAMPLES.length,
+      data: AIRPORTS_EXAMPLES,
+    });
   });
 
   it('search by IATA, then should return an airport object', async () => {

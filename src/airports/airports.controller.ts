@@ -1,8 +1,11 @@
 
-import { Controller, Get, Param, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Param, Query, NotFoundException, UsePipes, ValidationPipe } from '@nestjs/common';
+
 import { AirportsService } from './airports.service';
 import { ApiResponse } from '../models/api-response';
 import { AirportDTO } from '../models/airport.dto';
+import { PaginationDTO } from '../models/pagination.dto';
+import { PaginationResultDTO } from '../models/pagination-result.dto';
 
 @Controller('airports')
 export class AirportsController {
@@ -12,9 +15,12 @@ export class AirportsController {
   Get all airports
    */
   @Get()
-  async findAll(): Promise<ApiResponse<AirportDTO[]>> {
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async findAll(
+    @Query() paginationDTO: PaginationDTO
+  ): Promise<ApiResponse<PaginationResultDTO<AirportDTO>>> {
     return {
-      data: await this.airportsService.findAll(),
+      data: await this.airportsService.findAll(paginationDTO),
     };
   }
 

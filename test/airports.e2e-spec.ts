@@ -59,13 +59,51 @@ describe('Airports (e2e)', () => {
     await app.close();
   });
 
-  it('Fetch all airports, then receive all airports', async () => {
+  it('Fetch all airports with default pagination values, then receive all airports', async () => {
     await airportRepository.save(AIRPORTS_EXAMPLES.map(airport => AirportDTO.from(airport).toEntity()));
     return request(app.getHttpServer())
       .get('/airports')
       .expect(200)
       .expect({
-        data: AIRPORTS_EXAMPLES,
+        data: {
+          page: 1,
+          pages: 1,
+          limit: 10,
+          total: AIRPORTS_EXAMPLES.length,
+          data: AIRPORTS_EXAMPLES,
+        },
+      });
+  });
+
+  it('Fetch all airports with specified pagination values, then receive all airports', async () => {
+    await airportRepository.save(AIRPORTS_EXAMPLES.map(airport => AirportDTO.from(airport).toEntity()));
+    return request(app.getHttpServer())
+      .get('/airports?page=1&limit=15')
+      .expect(200)
+      .expect({
+        data: {
+          page: 1,
+          pages: 1,
+          limit: 15,
+          total: AIRPORTS_EXAMPLES.length,
+          data: AIRPORTS_EXAMPLES,
+        },
+      });
+  });
+
+  it('Fetch all airports with specified pagination values, then receive empty airports list', async () => {
+    await airportRepository.save(AIRPORTS_EXAMPLES.map(airport => AirportDTO.from(airport).toEntity()));
+    return request(app.getHttpServer())
+      .get('/airports?page=100&limit=25')
+      .expect(200)
+      .expect({
+        data: {
+          page: 100,
+          pages: 1,
+          limit: 25,
+          total: AIRPORTS_EXAMPLES.length,
+          data: [],
+        },
       });
   });
 
