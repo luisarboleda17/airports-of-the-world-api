@@ -1,23 +1,24 @@
 
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, Index } from 'typeorm';
 
 @Entity({ name: 'airport' })
 export class Airport {
-  @Column({ primary: true, type: 'varchar' })
-  id: string;
+  @Column({ primary: true, type: 'varchar', length: 3 })
+  iata: string;
 
+  @Index()
   @Column({ type: 'varchar' })
   name: string;
 
+  @Index()
   @Column({ type: 'varchar' })
   city: string;
 
+  @Index()
   @Column({ type: 'varchar' })
   country: string;
 
-  @Column({ type: 'varchar', length: 3 })
-  iata: string;
-
+  @Index({ unique: true })
   @Column({ type: 'varchar', length: 4 })
   icao: string;
 
