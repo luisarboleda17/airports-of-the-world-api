@@ -5,6 +5,8 @@ import { NotFoundException } from '@nestjs/common';
 import { AirportsController } from './airports.controller';
 import { AirportsService } from './airports.service';
 import { AirportDTO } from '../models/airport.dto';
+import { AirportsListDTO } from '../models/airports-list.dto';
+import { PaginationDTO } from '../models/pagination.dto';
 
 const AIRPORTS_EXAMPLES = [
   AirportDTO.from({
@@ -59,24 +61,66 @@ describe('AirportsController', () => {
     controller = module.get<AirportsController>(AirportsController);
   });
 
-  it('should return a list of airports', async () => {
-    const airportsServiceFindAllSpy = jest.spyOn(service, 'findAll').mockResolvedValue({
+  it('search without filters, then return a list of airports', async () => {
+    const result = {
       page: 1,
       pages: 1,
       limit: 10,
       total: AIRPORTS_EXAMPLES.length,
       data: AIRPORTS_EXAMPLES.map(airport => AirportDTO.from(airport)),
-    });
-    const airports = await controller.findAll({ page: 1, limit: 10 });
+    };
+    const paginationDTO: PaginationDTO = { page: 1, limit: 10 };
+    const airportsListDTO = AirportsListDTO.from({});
+    const airportsServiceFindAllSpy = jest.spyOn(service, 'findAll').mockResolvedValue(result);
+    const airports = await controller.findAll(paginationDTO, airportsListDTO);
 
     expect(airportsServiceFindAllSpy).toBeCalledTimes(1);
-    expect(airports.data).toEqual({
+    expect(airportsServiceFindAllSpy).toBeCalledWith(paginationDTO, airportsListDTO);
+    expect(airports.data).toEqual(result);
+  });
+
+  it('search with all filters, then return a list of airports', async () => {
+    const result = {
       page: 1,
       pages: 1,
       limit: 10,
       total: AIRPORTS_EXAMPLES.length,
-      data: AIRPORTS_EXAMPLES,
+      data: AIRPORTS_EXAMPLES.map(airport => AirportDTO.from(airport)),
+    };
+    const paginationDTO: PaginationDTO = { page: 1, limit: 10 };
+    const airportsListDTO = AirportsListDTO.from({
+      name: 'test-name',
+      city: 'test-city',
+      country: 'test-country',
     });
+    const airportsServiceFindAllSpy = jest.spyOn(service, 'findAll').mockResolvedValue(result);
+    const airports = await controller.findAll(paginationDTO, airportsListDTO);
+
+    expect(airportsServiceFindAllSpy).toBeCalledTimes(1);
+    expect(airportsServiceFindAllSpy).toBeCalledWith(paginationDTO, airportsListDTO);
+    expect(airports.data).toEqual(result);
+  });
+
+  it('search with all filters, then return an empty list', async () => {
+    const result = {
+      page: 1,
+      pages: 1,
+      limit: 10,
+      total: 0,
+      data: [],
+    };
+    const paginationDTO: PaginationDTO = { page: 1, limit: 10 };
+    const airportsListDTO = AirportsListDTO.from({
+      name: 'test-name',
+      city: 'test-city',
+      country: 'test-country',
+    });
+    const airportsServiceFindAllSpy = jest.spyOn(service, 'findAll').mockResolvedValue(result);
+    const airports = await controller.findAll(paginationDTO, airportsListDTO);
+
+    expect(airportsServiceFindAllSpy).toBeCalledTimes(1);
+    expect(airportsServiceFindAllSpy).toBeCalledWith(paginationDTO, airportsListDTO);
+    expect(airports.data).toEqual(result);
   });
 
   it('search by IATA, then should return an airport object', async () => {

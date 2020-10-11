@@ -7,6 +7,7 @@ import { Airport } from '../models/airport.entity';
 import { AirportDTO } from '../models/airport.dto';
 import { PaginationDTO } from '../models/pagination.dto';
 import { PaginationResultDTO } from '../models/pagination-result.dto';
+import { AirportsListDTO } from '../models/airports-list.dto';
 
 @Injectable()
 export class AirportsService {
@@ -17,11 +18,14 @@ export class AirportsService {
 
   /**/
   async findAll(
-    paginationDTO: PaginationDTO
+    paginationDTO: PaginationDTO,
+    airportsListDTO?: AirportsListDTO
   ): Promise<PaginationResultDTO<AirportDTO>> {
     const offset = (paginationDTO.page - 1) * paginationDTO.limit;
-    const totalCount = await this.repository.count();
-    const airports = await this.repository.createQueryBuilder()
+    const baseQuery = this.repository.createQueryBuilder()
+      .where(airportsListDTO ? airportsListDTO.toQueryFilter() : null)
+    const totalCount = await baseQuery.getCount();
+    const airports = await baseQuery
       .orderBy('iata', 'ASC')
       .offset(offset)
       .limit(paginationDTO.limit)

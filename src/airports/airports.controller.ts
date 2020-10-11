@@ -4,6 +4,7 @@ import { Controller, Get, Param, Query, NotFoundException, UsePipes, ValidationP
 import { AirportsService } from './airports.service';
 import { ApiResponse } from '../models/api-response';
 import { AirportDTO } from '../models/airport.dto';
+import { AirportsListDTO } from '../models/airports-list.dto';
 import { PaginationDTO } from '../models/pagination.dto';
 import { PaginationResultDTO } from '../models/pagination-result.dto';
 
@@ -17,10 +18,11 @@ export class AirportsController {
   @Get()
   @UsePipes(new ValidationPipe({ transform: true }))
   async findAll(
-    @Query() paginationDTO: PaginationDTO
+    @Query() paginationDTO: PaginationDTO,
+    @Query() airportsListDTO: AirportsListDTO,
   ): Promise<ApiResponse<PaginationResultDTO<AirportDTO>>> {
     return {
-      data: await this.airportsService.findAll(paginationDTO),
+      data: await this.airportsService.findAll(paginationDTO, airportsListDTO),
     };
   }
 

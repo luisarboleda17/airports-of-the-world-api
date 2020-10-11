@@ -107,6 +107,71 @@ describe('Airports (e2e)', () => {
       });
   });
 
+  it('Fetch all airports with default pagination, and name filter, then receive an one-length airports list', async () => {
+    await airportRepository.save([AirportDTO.from(AIRPORTS_EXAMPLES[0]).toEntity()]);
+    return request(app.getHttpServer())
+      .get(`/airports?name=${AIRPORTS_EXAMPLES[0].name}`)
+      .expect(200)
+      .expect({
+        data: {
+          page: 1,
+          pages: 1,
+          limit: 10,
+          total: 1,
+          data: [AIRPORTS_EXAMPLES[0]],
+        },
+      });
+  });
+
+  it('Fetch all airports with default pagination, and city filter, then receive an one-length airports list', async () => {
+    await airportRepository.save([AirportDTO.from(AIRPORTS_EXAMPLES[0]).toEntity()]);
+    return request(app.getHttpServer())
+      .get(`/airports?city=${AIRPORTS_EXAMPLES[0].city}`)
+      .expect(200)
+      .expect({
+        data: {
+          page: 1,
+          pages: 1,
+          limit: 10,
+          total: 1,
+          data: [AIRPORTS_EXAMPLES[0]],
+        },
+      });
+  });
+
+  it('Fetch all airports with default pagination, and country filter, then receive an one-length airports list', async () => {
+    await airportRepository.save([AirportDTO.from(AIRPORTS_EXAMPLES[0]).toEntity()]);
+    return request(app.getHttpServer())
+      .get(`/airports?country=${AIRPORTS_EXAMPLES[0].country}`)
+      .expect(200)
+      .expect({
+        data: {
+          page: 1,
+          pages: 1,
+          limit: 10,
+          total: 1,
+          data: [AIRPORTS_EXAMPLES[0]],
+        },
+      });
+  });
+
+  it('Fetch all airports with default pagination, and name, city and country filters, then receive an one-length airports list', async () => {
+    const exampleAirport = AIRPORTS_EXAMPLES[0];
+    await airportRepository.save([AirportDTO.from(exampleAirport).toEntity()]);
+    return request(app.getHttpServer())
+      .get(`/airports?name=${exampleAirport.name}&city=${exampleAirport.city}&country=${exampleAirport.country}`)
+      .expect(200)
+      .expect({
+        data: {
+          page: 1,
+          pages: 1,
+          limit: 10,
+          total: 1,
+          data: [AIRPORTS_EXAMPLES[0]],
+        },
+      });
+  });
+
   it('Fetch and airport by it\'s IATA code, then receive an airport', async () => {
     await airportRepository.save([AirportDTO.from(AIRPORTS_EXAMPLES[0]).toEntity()]);
     return request(app.getHttpServer())
