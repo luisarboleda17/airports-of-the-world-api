@@ -3,6 +3,7 @@ import { IsString, IsDecimal, Length } from 'class-validator';
 
 import { Route } from './route.entity';
 import { Airport } from './airport.entity';
+import { AirportDTO } from './airport.dto';
 
 export class RouteDTO implements Readonly<RouteDTO> {
   @IsString()
@@ -20,8 +21,8 @@ export class RouteDTO implements Readonly<RouteDTO> {
   @Length(3, 3)
   destinationIata!: string;
 
-  origin?: Airport;
-  destination?: Airport;
+  origin?: AirportDTO;
+  destination?: AirportDTO;
 
   static from(dto: Partial<RouteDTO>) {
     const route = new RouteDTO();
@@ -40,8 +41,8 @@ export class RouteDTO implements Readonly<RouteDTO> {
       distance: entity.distance,
       originIata: entity.originIata,
       destinationIata: entity.destinationIata,
-      origin: entity.origin,
-      destination: entity.destination,
+      origin: entity.origin ? AirportDTO.fromEntity(entity.origin) : undefined,
+      destination: entity.destination ? AirportDTO.fromEntity(entity.destination) : undefined,
     });
   }
 
@@ -51,8 +52,8 @@ export class RouteDTO implements Readonly<RouteDTO> {
     route.distance = this.distance;
     route.originIata = this.originIata;
     route.destinationIata = this.destinationIata;
-    route.origin = this.origin;
-    route.destination = this.destination;
+    route.origin = this.origin ? this.origin.toEntity() : undefined;
+    route.destination = this.destination ? this.destination.toEntity() : undefined;
     return route;
   }
 }
