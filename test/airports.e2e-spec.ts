@@ -2,12 +2,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 import { AppModule } from '../src/app.module';
-import { AirportDTO } from '../src/models/airport.dto';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Airport } from '../src/models/airport.entity';
-import { Repository } from 'typeorm';
+import { Airport, AirportDTO } from '../src/models';
 
 const AIRPORTS_EXAMPLES = [
   {

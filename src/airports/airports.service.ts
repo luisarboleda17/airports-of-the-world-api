@@ -3,11 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { Airport } from '../models/airport.entity';
-import { AirportDTO } from '../models/airport.dto';
-import { PaginationDTO } from '../models/pagination.dto';
-import { PaginationResultDTO } from '../models/pagination-result.dto';
-import { AirportsListDTO } from '../models/airports-list.dto';
+import { Airport, AirportDTO, PaginationDTO, PaginationResultDTO, AirportsListDTO } from '../models';
 
 @Injectable()
 export class AirportsService {
@@ -16,7 +12,11 @@ export class AirportsService {
     private readonly repository: Repository<Airport>,
   ) { }
 
-  /**/
+  /**
+   * Get airports with or without filtering
+   * @param paginationDTO
+   * @param airportsListDTO
+   */
   async findAll(
     paginationDTO: PaginationDTO,
     airportsListDTO?: AirportsListDTO
