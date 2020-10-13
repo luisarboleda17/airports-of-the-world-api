@@ -80,13 +80,13 @@ workflows:
     jobs:
       - unit_test
       - e2e_test:
-          context: heroku_test
+          context: test
           filters:
             branches:
               only:
                 - master
       - deploy:
-          context: heroku_prod
+          context: prod
           requires:
             - unit_test
             - e2e_test
