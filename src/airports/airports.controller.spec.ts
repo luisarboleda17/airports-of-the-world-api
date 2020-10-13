@@ -4,9 +4,7 @@ import { NotFoundException } from '@nestjs/common';
 
 import { AirportsController } from './airports.controller';
 import { AirportsService } from './airports.service';
-import { AirportDTO } from '../models/airport.dto';
-import { AirportsListDTO } from '../models/airports-list.dto';
-import { PaginationDTO } from '../models/pagination.dto';
+import { AirportDTO, AirportsListDTO, PaginationDTO } from '../models';
 
 const AIRPORTS_EXAMPLES = [
   AirportDTO.from({

@@ -8,6 +8,9 @@ import { AppController } from './app.controller';
 import { AirportsController } from './airports/airports.controller';
 import { AirportsService } from './airports/airports.service';
 import { Airport } from './models/airport.entity';
+import { Route } from './models/route.entity';
+import { RoutesService } from './routes/routes.service';
+import { RoutesController } from './routes/routes.controller';
 
 /**
  * Load environment file depends on environment
@@ -27,12 +30,18 @@ export const getEnvironmentFile = () =>
       useClass: TypeOrmConfigService
     }),
     TypeOrmModule.forFeature([
-      Airport
+      Airport,
+      Route,
     ]),
   ],
-  controllers: [AppController, AirportsController],
+  controllers: [
+    AppController,
+    AirportsController,
+    RoutesController,
+  ],
   providers: [
     AirportsService,
+    RoutesService,
   ],
 })
 export class AppModule {}
