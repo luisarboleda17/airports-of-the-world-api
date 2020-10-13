@@ -2,11 +2,7 @@
 import { Controller, Get, Param, Query, NotFoundException, UsePipes, ValidationPipe } from '@nestjs/common';
 
 import { AirportsService } from './airports.service';
-import { ApiResponse } from '../models/api-response';
-import { AirportDTO } from '../models/airport.dto';
-import { AirportsListDTO } from '../models/airports-list.dto';
-import { PaginationDTO } from '../models/pagination.dto';
-import { PaginationResultDTO } from '../models/pagination-result.dto';
+import { ApiResponse, AirportDTO, AirportsListDTO, PaginationDTO, PaginationResultDTO } from '../models';
 
 @Controller('airports')
 export class AirportsController {

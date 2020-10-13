@@ -4,9 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { AirportsService } from './airports.service';
-import { AirportDTO } from '../models/airport.dto';
-import { Airport } from '../models/airport.entity';
-import { AirportsListDTO } from '../models/airports-list.dto';
+import { AirportDTO, Airport, AirportsListDTO } from '../models';
 
 const AIRPORTS_EXAMPLES = [
   AirportDTO.from({

@@ -1,5 +1,7 @@
 
-import { Entity, Column, Index } from 'typeorm';
+import { Entity, Column, Index, OneToMany } from 'typeorm';
+
+import { Route } from './route.entity';
 
 @Entity({ name: 'airport' })
 export class Airport {
@@ -42,4 +44,7 @@ export class Airport {
 
   @Column({ type: 'varchar' })
   source: string;
+
+  @OneToMany(() => Route, route => route.origin || route.destination)
+  public routes!: Promise<Route[]>;
 }
